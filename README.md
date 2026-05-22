@@ -47,7 +47,9 @@
 > trained on data from over **45 global exchanges**.
 
 <!-- Personal note: forked for studying the hierarchical tokenizer design and experimenting
-     with crypto-only fine-tuning on Binance data. -->
+     with crypto-only fine-tuning on Binance data.
+     TODO: test whether restricting pre-training vocab to crypto pairs improves
+     downstream performance on BTC/ETH 1h interval prediction. -->
 
 </div>
 
@@ -64,9 +66,4 @@
 1. A specialized tokenizer first quantizes continuous, multi-dimensional K-line data (OHLCV) into **hierarchical discrete tokens**. 
 2. A large, autoregressive Transformer is then pre-trained on these tokens, enabling it to serve as a unified model for diverse quantitative tasks.
 
-<p align="center">
-    <img src="figures/overview.png" alt="" align="center" width="700px" />
-</p>
-
-## ✨ Live Demo 
-We have set up a live demo to visualize Kronos
+<p align="cente
