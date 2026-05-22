@@ -68,6 +68,14 @@ def prepare_stock_data(csv_file_path, stock_code):
     # 按时间排序
     df = df.sort_values('timestamps').reset_index(drop=True)
 
+    # 删除收盘价为空或为0的行，避免脏数据影响预测结果
+    if 'close' in df.columns:
+        before = len(df)
+        df = df[df['close'].notna() & (df['close'] > 0)].reset_index(drop=True)
+        removed = before - len(df)
+        if removed > 0:
+            print(f"⚠️  已移除 {removed} 条无效收盘价记录")
+
     print(f"✅ 数据加载完成，共 {len(df)} 条记录")
     print(f"时间范围: {df['timestamps'].min()} 到 {df['timestamps'].max()}")
     print(f"数据列: {df.columns.tolist()}")
@@ -122,20 +130,4 @@ def generate_future_dates_with_holidays(last_date, pred_len):
     """
     # 中国主要节假日（需要根据实际情况调整）
     # 参考：上交所/深交所官方公告的2025年休市安排
-    holidays_2025 = [
-        # 元旦
-        '2025-01-01',
-        # 春节（1月28日-2月4日）
-        '2025-01-28', '2025-01-29', '2025-01-30', '2025-01-31',
-        '2025-02-03', '2025-02-04',
-        # 清明节
-        '2025-04-04', '2025-04-07',
-        # 劳动节（5月1日-5日）
-        '2025-05-01', '2025-05-02', '2025-05-05',
-        # 端午节
-        '2025-05-30', '2025-06-02',
-        # 中秋节
-        '2025-10-06',
-        # 国庆节（10月1日-8日）
-        '2025-10-01', '2025-10-02', '2025-10-03', '2025-10-07', '2025-10-08',
-    ]
+    holi
