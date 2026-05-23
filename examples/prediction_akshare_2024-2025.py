@@ -83,13 +83,13 @@ def prepare_stock_data(csv_file_path, stock_code):
     return df
 
 
-def calculate_prediction_parameters(df, target_days=100):
+def calculate_prediction_parameters(df, target_days=60):
     """
     根据目标预测天数计算合适的参数
 
     参数:
     df: 股票数据DataFrame
-    target_days: 目标预测天数（自然日）
+    target_days: 目标预测天数（自然日），默认改为60天，100天预测误差偏大
 
     返回:
     lookback: 回看期数
@@ -115,19 +115,3 @@ def calculate_prediction_parameters(df, target_days=100):
     print(f"  预测期数 (pred_len): {pred_len}")
 
     return lookback, pred_len
-
-
-def generate_future_dates_with_holidays(last_date, pred_len):
-    """
-    生成未来的交易日日期，考虑中国节假日
-
-    参数:
-    last_date: 最后一个历史数据的日期
-    pred_len: 预测期数
-
-    返回:
-    future_dates: 未来的交易日日期列表
-    """
-    # 中国主要节假日（需要根据实际情况调整）
-    # 参考：上交所/深交所官方公告的2025年休市安排
-    holi
