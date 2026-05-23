@@ -65,9 +65,10 @@ def get_stock_data_eastmoney(stock_code="002354", start_year=2024, end_year=2025
         }
 
         # Increased sleep range slightly to be more conservative with request rate
-        time.sleep(random.uniform(1.5, 3))
+        # NOTE: bumped upper bound to 4s to further reduce risk of being rate-limited
+        time.sleep(random.uniform(1.5, 4))
 
-        response = requests.get(url, params=params, headers=headers, timeout=10)
+        response = requests.get(url, params=params, headers=headers, timeout=15)
 
         print(f"API响应状态码: {response.status_code}")
 
@@ -95,6 +96,4 @@ def get_stock_data_eastmoney(stock_code="002354", start_year=2024, end_year=2025
                 print("❌ 无法找到JSON数据边界")
                 return None
 
-            print(f"API返回数据状态: {data.get('rc', 'N/A')}")
-
-            if data and data.get('data') is not None:
+            pri
