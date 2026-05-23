@@ -57,8 +57,8 @@ def get_stock_data_eastmoney_all_history(stock_code="002354"):
             'Accept': '*/*',
         }
 
-        # 稍微增加随机等待时间，避免请求过于频繁被限流
-        time.sleep(random.uniform(1.5, 3))
+        # 增加随机等待时间范围，减少被限流的概率（个人使用时也要注意频率）
+        time.sleep(random.uniform(2.0, 4.5))
 
         response = requests.get(url, params=params, headers=headers, timeout=15)
 
@@ -95,7 +95,4 @@ def get_stock_data_eastmoney_all_history(stock_code="002354"):
 
                 if not klines:
                     print("⚠️ K线数据为空")
-                    return None
-
-                # 解析数据
-            
+                 
