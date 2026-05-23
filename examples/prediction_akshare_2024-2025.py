@@ -83,13 +83,14 @@ def prepare_stock_data(csv_file_path, stock_code):
     return df
 
 
-def calculate_prediction_parameters(df, target_days=60):
+def calculate_prediction_parameters(df, target_days=30):
     """
     根据目标预测天数计算合适的参数
 
     参数:
     df: 股票数据DataFrame
-    target_days: 目标预测天数（自然日），默认改为60天，100天预测误差偏大
+    target_days: 目标预测天数（自然日），默认30天；60天和100天预测误差偏大，
+                 实测30天的预测结果更稳定可靠
 
     返回:
     lookback: 回看期数
@@ -113,5 +114,3 @@ def calculate_prediction_parameters(df, target_days=60):
     print(f"  预计交易日数量: {pred_trading_days} 天")
     print(f"  回看期数 (lookback): {lookback}")
     print(f"  预测期数 (pred_len): {pred_len}")
-
-    return lookback, pred_len
