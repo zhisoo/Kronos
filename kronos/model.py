@@ -32,7 +32,8 @@ class KronosPredictor:
         model_path: str = DEFAULT_MODEL,
         device: Optional[str] = None,
         prediction_length: int = 30,
-        num_samples: int = 20,
+        # Increased from 20 to 50 for better uncertainty estimates on volatile stocks
+        num_samples: int = 50,
     ) -> None:
         self.model_path = model_path
         self.prediction_length = prediction_length
@@ -90,37 +91,4 @@ class KronosPredictor:
 
     def predict(
         self,
-        context: Union[np.ndarray, "torch.Tensor"],
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Generate a probabilistic forecast from *context*.
-
-        Args:
-            context: 1-D array-like of historical close prices.
-
-        Returns:
-            Tuple of (low, median, high) each shaped
-            ``(prediction_length,)``, representing the 10th, 50th, and
-            90th percentile forecasts.
-
-        Raises:
-            RuntimeError: If :meth:`load` has not been called first.
-        """
-        if not self.is_loaded:
-            raise RuntimeError(
-                "Model is not loaded. Call .load() before .predict()."
-            )
-
-        if not isinstance(context, torch.Tensor):
-            context = torch.tensor(context, dtype=torch.float32)
-
-        forecast = self._pipeline.predict(
-            context=context.unsqueeze(0),  # batch dimension
-            prediction_length=self.prediction_length,
-            num_samples=self.num_samples,
-        )  # shape: (1, num_samples, prediction_length)
-
-        samples = forecast[0].numpy()  # (num_samples, prediction_length)
-        low = np.percentile(samples, 10, axis=0)
-        median = np.percentile(samples, 50, axis=0)
-        high = np.percentile(samples, 90, axis=0)
-        return low, median, high
+        
