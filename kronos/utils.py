@@ -93,71 +93,14 @@ def prepare_context_window(
     """
     if isinstance(series, pd.Series):
         series = series.values
-    series = np.asarray(series, dtype=np.float32).ravel()
+
+    series = np.asarray(series, dtype=np.float32)
 
     if len(series) < context_length:
         raise ValueError(
-            f"Series length {len(series)} is shorter than the required "
-            f"context_length {context_length}."
+            f"Series length ({len(series)}) is shorter than "
+            f"context_length ({context_length})."
         )
 
-    if prediction_length < 1:
-        raise ValueError("prediction_length must be >= 1.")
-
+    # Take the most recent context_length steps
     return series[-context_length:]
-
-
-def build_forecast_index(
-    last_date: pd.Timestamp,
-    prediction_length: int,
-    freq: str = "B",
-) -> pd.DatetimeIndex:
-    """Build a DatetimeIndex for the forecast horizon.
-
-    Args:
-        last_date: The last observed date in the historical series.
-        prediction_length: Number of future periods to generate.
-        freq: Pandas offset alias, e.g. ``'B'`` (business day), ``'D'``,
-              ``'H'``, ``'T'``.
-
-    Returns:
-        A :class:`pd.DatetimeIndex` of length *prediction_length* starting
-        one period after *last_date*.
-    """
-    return pd.date_range(
-        start=last_date + pd.tseries.frequencies.to_offset(freq),  # type: ignore[operator]
-        periods=prediction_length,
-        freq=freq,
-    )
-
-
-def forecast_to_dataframe(
-    forecast: np.ndarray,
-    index: pd.DatetimeIndex,
-    quantiles: Optional[Tuple[float, ...]] = None,
-) -> pd.DataFrame:
-    """Convert a raw forecast array to a tidy DataFrame.
-
-    Args:
-        forecast: Array of shape ``(prediction_length,)`` for a point
-            forecast, or ``(num_quantiles, prediction_length)`` for a
-            quantile forecast.
-        index: DatetimeIndex of length *prediction_length*.
-        quantiles: Sequence of quantile levels matching the first axis of
-            *forecast* when it is 2-D.  Ignored for point forecasts.
-
-    Returns:
-        DataFrame indexed by *index*.
-    """
-    forecast = np.asarray(forecast)
-
-    if forecast.ndim == 1:
-        return pd.DataFrame({"forecast": forecast}, index=index)
-
-    if forecast.ndim == 2:
-        if quantiles is None:
-            quantiles = tuple(range(forecast.shape[0]))
-        cols = {f"q{q:.2f}": forecast[i] for i, q in enumerate(quantiles)}
-        return pd.DataFrame(cols, index=index)
-
-    raise ValueError("forecast must be 1-D or 2-D.")
